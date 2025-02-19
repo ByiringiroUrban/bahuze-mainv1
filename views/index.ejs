@@ -64,13 +64,13 @@
         <% } %>
     
         <!-- Pagination -->
-         <% if (totalPages > 1) { %>
-            <nav aria-label="Page navigation ">
-                <div class="d-flex justify-content-center p-3" style="position: relative; z-index: -1;">
+        <% if (totalPages > 1) { %>
+            <nav aria-label="Page navigation">
+                <div class="d-flex justify-content-center p-3">
                     <ul class="pagination">
                         <% for (let i = 1; i <= totalPages; i++) { %>
                             <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                <a class="page-link" href="/?page=<%= i %>"><%= i %></a>
+                                <a class="page-link" href="/?page=<%= i %>&type=<%= filter %>&scale=<%= scale %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>"><%= i %></a>
                             </li>
                         <% } %>
                     </ul>

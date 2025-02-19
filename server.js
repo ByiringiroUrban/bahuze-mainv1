@@ -185,62 +185,51 @@ app.use("/uploads", express.static("uploads"));
 // Define Routes
 app.get("/", async (req, res) => {
   try {
-      const page = parseInt(req.query.page) || 1; // Get current page from query, default to 1
-      const limit = 8; // Limit to 8 properties per page
-      const skip = (page - 1) * limit; // Calculate the number of documents to skip
+      const page = Number(req.query.page) || 1;
+      const limit = 8;
+      const skip = (page - 1) * limit;
 
-      // Get the filter type from query parameters
-      const filter = req.query.type || ''; // Default to empty if no filter
-      const neighborhood = req.query.neighborhood || ''; // Get neighborhood from query
-      const scale = req.query.scale || ''; // Get scale (Rent/Sale) from query
-      const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : 0; // Minimum price
-      const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : Infinity; // Maximum price
+      const filter = req.query.type || "";
+      const neighborhood = req.query.neighborhood || "";
+      const scale = req.query.scale || "";
+      const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : 0;
+      const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : Infinity;
 
-      // Build the filter object
       const filterObj = {};
-      if (filter) {
-          filterObj.type = filter; // Filter by property type
-      }
-  
-      if (scale) {
-          filterObj.type = scale; // Assuming 'type' is used for both Rent/Sale
-      }
-      if (minPrice || maxPrice < Infinity) {
+      if (filter) filterObj.type = filter;
+      if (scale) filterObj.scale = scale; // Use correct field
+      if (minPrice > 0 || maxPrice < Infinity) {
           filterObj.price = {};
-          if (minPrice) filterObj.price.$gte = minPrice;
+          if (minPrice > 0) filterObj.price.$gte = minPrice;
           if (maxPrice < Infinity) filterObj.price.$lte = maxPrice;
       }
 
-      // Find properties based on the filter
       const properties = await Property.find(filterObj).skip(skip).limit(limit);
-      const totalProperties = await Property.countDocuments(filterObj); // Get total number of properties
-      const totalPages = Math.ceil(totalProperties / limit); // Calculate total pages
+      const totalProperties = await Property.countDocuments(filterObj);
+      const totalPages = Math.max(1, Math.ceil(totalProperties / limit));
 
-      // Fetch unique property types for dropdown
       const propertyTypes = await Property.distinct("type");
       const propertyhousetype = await Property.distinct("housetype");
       const propertyLocation = await Property.distinct("location");
+
       res.render("index", { 
           properties, 
           currentPage: page, 
           totalPages, 
           filter, 
+          scale,
           propertyLocation,
           minPrice, 
           maxPrice,
           propertyTypes,
           propertyhousetype
-      }); // Pass properties and pagination data to the view
+      });
+
   } catch (error) {
       console.error("❌ Error fetching properties:", error);
-      res.scale(500).send("Error loading properties");
+      res.status(500).send("Error loading properties");
   }
 });
-
-
-
-
-
 
 
 app.get("/register", (req, res) => res.render("register"));
