@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-housetype=1.0">
+    <title>Bahuze</title>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="icon" href="/images/logo.png">
+</head>
+<%- include('partials/spinner')%>
+<body class="spinner-container">
+    <!-- Header Section -->
+    <%- include('partials2/header') %>
+
+    <!-- Search Section -->
+    <%- include('partials2/section') %>
+
+    <!-- Featured Properties Section -->
+    <section class="featured-properties">
+        <h2>Real Estate Properties</h2>
+        <div class="tabs">
+            <button class="tab-button <%= !filter ? 'active' : '' %>" onclick="filterProperties('')">Latest</button>
+            <button class="tab-button <%= filter === 'Sale' ? 'active' : '' %>" onclick="filterProperties('Sale')">Sale</button>
+            <button class="tab-button <%= filter === 'Rent' ? 'active' : '' %>" onclick="filterProperties('Rent')">Rent</button>
+        </div>
+    
+        <script>
+            function filterProperties(type) {
+                window.location.href = type ? `/?type=${type}` : "/";
+            }
+        </script>
+    
+        <% if (properties.length > 0) { %>
+            <div class="property-grid">
+                <% properties.forEach(property => { %>
+                    <div class="property-card" style="position: relative; z-index: -11;">
+                        <a href="#"><img src="<%= property.images[0] %>" alt="Property Image"></a>
+                        <div class="property-info">
+                            <a href="#"><h5 class="text-warning"> RWF<%= property.price %> / <span class="badge text-bg-primary"><%= property.housetype %></span></h5></a>
+                            <p><%= property.location %></p>
+                            <span><%= property.category %> - <%= property.size %>km/square</span>
+                            <% if (property.type === 'Rent') { %>
+                                <div class="bg-warning fw-bolder p-3 d-flex justify-content-center align-items-center" style="height: 53px; width: 53px; text-align: center; clip-path: polygon(50% 0%, 63% 30%, 98% 35%, 76% 57%, 79% 91%, 50% 74%, 21% 91%, 25% 58%, 2% 35%, 33% 32%); position: relative; z-index: -1; font-size: 9px;">
+                                    Rent
+                                </div>
+                            <% } else if (property.type === 'Sale') { %>
+                                <div class="bg-success fw-bolder p-3 d-flex justify-content-center align-items-center" style="height: 53px; width: 53px; text-align: center; clip-path: polygon(50% 0%, 63% 30%, 98% 35%, 76% 57%, 79% 91%, 50% 74%, 21% 91%, 25% 58%, 2% 35%, 33% 32%); position: relative; z-index: -1; font-size: 9px;">
+                                    Sale
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="property-grid">
+                <div class="property-card">
+                    <p>No properties available.</p>
+                </div>
+            </div>
+        <% } %>
+    
+        <!-- Pagination -->
+         <% if (totalPages > 1) { %>
+            <nav aria-label="Page navigation ">
+                <div class="d-flex justify-content-center p-3" style="position: relative; z-index: -1;">
+                    <ul class="pagination">
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="/?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </nav>
+        <% } %>
+        
+    </section>
+    
+    
+<!--     
+    <div class="number-div">
+        <a href=""><h3>1  </h3></a>
+        <a href=""><h3>2  </h3></a>
+        <a href=""><h3>3 </h3></a>
+        <a href=""><h3>4  </h3></a>
+        <a href=""><h3>5  </h3></a>
+        <a href=""><h3>6  </h3></a>
+        <a href=""><h3>7  </h3></a>
+        <a href=""><h3>8  </h3></a>
+        <a href=""><h3>9  </h3></a>
+        <a href=""><h3>10  </h3></a>
+    </div> -->
+    <!-- Blue Background Section -->
+<section class="blue-section">
+    <div class="content-wrapper">
+        <!-- Column 1: Buy - Sell - Rent -->
+        <div class="info-box">
+            <img src="/assets/img/icon1.png" alt="House Icon" class="icon">
+            <a href="" style="text-decoration: none;"><h3>Buy - Sell - Rent</h3></a>
+            <p>
+                Have you ever been stressed by sourcing a perfect property for you? Have you ever been disappointed because of being taken to properties that are far from your criteria? Do you really need professional real estate broker to assist you? If you really care about your time, our team at abahuza.com is passionate to locate and negotiate the acquisition of suitable property for you. Finding the perfect property, whether it's Land, Residential, office or other commercial...
+            </p>
+        </div>
+
+        <!-- Column 2: Services -->
+        <div class="info-box">
+            <img src="/assets/img/icon2.png" alt="Services Icon" class="icon">
+            <a href="/serviceTeams" style="text-decoration: none;"><h3>Services</h3></a>
+            <ul>
+                <li>Property Management</li>
+                <li>Property Valuation</li>
+                <li>Construction project study & Supervision</li>
+                <li>Building renovation and finishing</li>
+                <li>Aluminum and Gypsum partitioning</li>
+            </ul>
+            <p>
+                If you are interested in one of our services, just contact us. Please Call or WhatsApp us on +250788853243. You can also drop by to our Office in Kigali City Center, Kacyiru, ST 567St Kigali.
+            </p>
+        </div>
+
+        <!-- Column 3: Spirit at Bahuze -->
+        <div class="info-box">
+            <img src="/assets/img/icon3.png" alt="Spirit Icon" class="icon">
+            <a href="" style="text-decoration: none;"><h3>Spirit at Bahuze.com</h3></a>
+            <p>
+                To be honest, we do not settle for anything less than Perfection, however there is a long path. Now we’re not good enough but we learn how to be the best in what we do and we admit with self-honesty when we’re wrong with courage to change. We don't value how long you stay at work or how hard you work; we care about accomplishing great work. It is not just working or getting the job with us...
+            </p>
+        </div>
+    </div>
+</section>
+
+
+<!-- Partners Section -->
+<section class="partners">
+    <h2>Our Partners</h2>
+    <img src="/assets/img/partner.png" alt="Partner Logo">
+</section>
+
+<!-- HTML for the Footer -->
+
+<%- include('partials2/footer') %>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="/js/index.js"></script>
+</body>
+</html>

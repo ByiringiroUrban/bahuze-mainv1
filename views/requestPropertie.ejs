@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Properties</title>
+  <link rel="stylesheet" href="css/requestPropertie.css">
+  <link rel="icon" href="/images/logo.png">
+</head>
+<body>
+   <!-- Header Section -->
+   <%- include('partials2/header') %>
+
+<!-- Search Section -->
+<%- include('partials2/section') %>
+
+
+<div class="form-container">
+    <form id="propertyRequestForm">
+      <div class="form-group">
+        <label for="firstName">First name</label>
+        <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+      </div>
+      <div class="form-group">
+        <label for="lastName">Last name</label>
+        <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+      </div>
+      <div class="form-group">
+        <label for="phoneNumber">Phone number</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+250" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Email" required>
+      </div>
+      <div class="form-group">
+        <label for="whoYouAre">Who you are</label>
+        <select id="whoYouAre" name="whoYouAre" required>
+          <option value="">-- Choose your wishes --</option>
+          <option value="own">I am searching the property for my own</option>
+          <option value="relative">I am searching Property for my Relative</option>
+          <option value="institution">I am searching the property for our institution</option>
+          <option value="friend">I am searching the Property for my friend</option>
+          <option value="agent">I am the agent/Broker of the property seeker</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="priceRange">Price Range</label>
+        <div class="price-range-dropdown">
+          <button type="button" id="priceRangeToggle">Select Price Range</button>
+          <div class="dropdown-content">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="rwf">RWF</option>
+              <option value="usd">USD</option>
+            </select>
+            <br>
+            <label for="minPrice">Min</label>
+            <input type="number" id="minPrice" placeholder="Minimum Amount">
+            <label for="maxPrice">Max</label>
+            <input type="number" id="maxPrice" placeholder="Maximum Amount">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="propertyType">Property type</label>
+        <select id="propertyType" name="propertyType">
+          <option value="">-- Select property type --</option>
+          <option value="apartment">Apartment</option>
+          <option value="house">House</option>
+          <option value="office">Office</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="propertyLocations">Property Locations</label>
+        <input type="text" id="propertyLocations" placeholder="List where do you prefer to live">
+      </div>
+      <div class="form-group full">
+        <label for="details">Describe in details the property you are looking for</label>
+        <textarea id="details" rows="5" placeholder="Message"></textarea>
+      </div>
+      <div class="form-group full">
+        <button type="submit">Send</button>
+      </div>
+    </form>
+  </div>
+  
+
+
+
+<!-- HTML for the Footer -->
+<%- include('partials2/footer') %>
+<script src="js/requestPropertie.js"></script>
+</body>
+</html>

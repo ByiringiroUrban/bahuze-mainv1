@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bahuze-Dashboard</title>
+  <link rel="stylesheet" href="dashboad.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=real_estate_agent" />  
+  <style>
+  .message-box {
+      max-width: 600px;
+      margin: 20px auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    .message-container {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .message {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .message .user {
+      background-color: #007bff;
+      color: white;
+      border-radius: 15px;
+      padding: 8px 15px;
+      max-width: 70%;
+      margin-right: 10px;
+    }
+    .message .admin {
+      background-color: #28a745;
+      color: white;
+      border-radius: 15px;
+      padding: 8px 15px;
+      max-width: 70%;
+      margin-left: 10px;
+    }
+    .input-container {
+      display: flex;
+      align-items: center;
+    }
+    .input-container input {
+      width: 90%;
+      padding: 10px;
+      border-radius: 25px;
+      border: 1px solid #ddd;
+      margin-right: 10px;
+    }
+    .input-container button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+    }
+    @media (max-width: 767px) {
+      .message-box {
+        margin: 10px;
+        padding: 15px;
+      }
+    }
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.profile-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  max-height: 400px;
+  height: 100%;
+  text-align: center;
+}
+
+.profile-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.profile-card h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.profile-card p {
+  margin-bottom: 10px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.profile-card button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-card button:hover {
+  background-color: #135ba1;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #f57c00 !important; /* Orange */
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.sidebar img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.sidebar h3 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.sidebar p {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.sidebar a {
+  color: white !important;
+  background-color: transparent !important;
+  text-decoration: none;
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 5px;
+  text-align: start ;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  
+}
+
+.sidebar a:hover {
+  background-color: #c57f3d !important; /* Darker orange */
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  
+}
+
+.header {
+  background-color: #75a4d3; /* Blue */
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 24px;
+  margin-left: 20px;
+}
+
+.header .nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.header .nav-links a {
+  color: white;
+  background-color: rgb(123, 207, 123);
+  text-decoration: none;
+  margin-right: 15px;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-links a:hover{
+  background-color: rgb(110, 196, 110)
+}
+
+.header .nav-links a:last-child {
+  margin-right: 0;
+}
+
+.header .small-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header .small-profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.header .small-profile span {
+  font-size: 14px;
+  color: white;
+}
+
+.profile-card {
+  background-color: rgb(243, 236, 236);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  max-height: 400px;
+  height: 100%;
+  text-align: center;
+}
+
+.profile-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.profile-card h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.profile-card p {
+  margin-bottom: 10px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.profile-card button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-card button:hover {
+  background-color: #135ba1;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: #f4f4f4;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 18px;
+    margin-left: 0;
+  }
+
+  .header .nav-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .profile-card {
+    width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header h1 {
+    margin-left: 0;
+    font-size: 16px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-links a {
+    margin: 5px 0;
+  }
+
+  .profile-card {
+    padding: 15px;
+  }
+}
+
+  
+
+        .container {
+            display: flex;
+            width: 100% ;
+            max-width: 100%;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            text-decoration: none;
+            background: #ddd;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background: #bbb;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: #fff;
+        }
+        .content-section {
+            display: none; /* Hide all sections initially */
+        }
+        .content-section.active {
+            display: block; /* Show only the active section */
+        }
+           body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f8f9fa;
+            }
+            h2 {
+                text-align: center;
+                color: #333;
+            }
+            .search-container {
+                position: relative;
+                max-width: 400px;
+                margin: 0 auto 10px;
+            }
+            .search-container input {
+                width: 100%;
+                padding: 10px 35px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+                display: none;
+            }
+            .search-container .material-icons {
+                position: relative;
+                background: #00000059;
+                padding: 10px;
+                border-radius: 50%;
+                left: 25rem;
+                top: 20px;
+                transform: translateY(-50%);
+                color: #cfcece;
+                cursor: pointer;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                border-radius: 5px;
+            }
+            th, td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            th {
+                background-color: #6b97c7;
+                color: white;
+            }
+            tr:hover {
+                background-color: #f1f1f1;
+            }
+            .pagination {
+                margin-top: 20px;
+                text-align: center;
+            }
+            .pagination button {
+                padding: 8px 12px;
+                margin: 3px;
+                border: none;
+                background-color: #ddd;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+            .pagination button.active {
+                background-color: #007bff;
+                color: white;
+            }
+    </style>
+</head>
+<body class="container-fluid">
+  <header class="header">
+    <h1>Bahuze</h1>
+    <div class="nav-links">
+      <a href="#"> ➕ Create Property</a>
+      <a href="#"> 🏡 Home</a>
+      <div class="small-profile">
+        <img src="<%= image %>" alt="Profile Picture">
+        <!-- <span>Byiringiro Urban</span> -->
+      </div>
+    </div>
+  </header>
+  <div class="container">
+    <aside class="sidebar ">
+        <img src="<%= image %>" alt="Profile Picture" >
+        <h3><%= fullName %></h3>
+        <p><%= tel %></p>
+        <a href="#" data-page="profile">Profile</a>
+        <a href="#" data-page="properties"> <span class="material-symbols-outlined">
+          real_estate_agent
+          </span> My Properties</a>
+        <a href="#" data-page="messages"> Clients Messages</a>
+        <a href="#" data-page="settings">Settings</a>
+    </aside>
+
+    <main class="main-content">
+        <!-- Profile Section (Default Visible) -->
+        <div id="profile" class="content-section profile-card active">
+            <h2>Profile</h2>
+            <img src="<%= image %>" alt="Profile Picture" >
+            <p><strong>Names:</strong> <%= fullName %></p>
+            <p><strong>Telephone number:</strong> <%= tel %></p>
+            <p><strong>Email:</strong> <%= email %></p>
+            <button>Change Profile</button>
+        </div>
+
+        <!-- My Properties Section -->
+        <div id="properties" class="content-section">
+          <h2>My Properties</h2>
+         
+    </head>
+    <body>
+        <div class="search-container">
+            <i class="material-icons" onclick="toggleSearch()">search</i>
+            <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for names, emails, roles...">
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td>John</td>
+                    <td>Doe</td>
+                    <td>john.doe@example.com</td>
+                    <td>Admin</td>
+                    <td>******</td>
+                </tr>
+                <tr>
+                    <td>Jane</td>
+                    <td>Smith</td>
+                    <td>jane.smith@example.com</td>
+                    <td>User</td>
+                    <td>******</td>
+                </tr>
+                <tr>
+                    <td>Michael</td>
+                    <td>Brown</td>
+                    <td>michael.brown@example.com</td>
+                    <td>Editor</td>
+                    <td>******</td>
+                </tr>
+                <tr>
+                    <td>Emily</td>
+                    <td>Clark</td>
+                    <td>emily.clark@example.com</td>
+                    <td>Admin</td>
+                    <td>******</td>
+                </tr>
+                <tr>
+                    <td>Chris</td>
+                    <td>Evans</td>
+                    <td>chris.evans@example.com</td>
+                    <td>User</td>
+                    <td>******</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination" id="pagination"></div>
+    
+        </div>
+
+        <!-- Clients Messages Section -->
+        <div id="messages" class="content-section">
+          <div class="container">
+            <div class="message-box">
+              <div class="message-container" id="message-container">
+                <!-- Messages will appear here -->
+              </div>
+              <div class="input-container">
+                <input type="text" id="message-input" placeholder="Type a message" />
+                <button onclick="sendMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settings" class="content-section">
+            <h2>Settings</h2>
+            <p>Update your profile and account settings here.</p>
+        </div>
+    </main>
+</div>
+
+
+  <footer>
+    <p>Copyright @ 2025 BAHUZE. All Rights Reserved.</p>
+  </footer>
+</body>
+<script src="dashboad.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // Function to send a message and trigger the WhatsApp API call
+  function sendMessage() {
+    const messageInput = document.getElementById('message-input');
+    const messageContainer = document.getElementById('message-container');
+    const message = messageInput.value;
+
+    if (message.trim() !== '') {
+      // Add User's message
+      const userMessage = document.createElement('div');
+      userMessage.classList.add('message');
+      userMessage.innerHTML = `<div class="user">${message}</div>`;
+      messageContainer.appendChild(userMessage);
+
+      // Clear the input field
+      messageInput.value = '';
+
+      // Scroll to the bottom of the message container
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+
+      // Send the message to the backend (Twilio API)
+      sendToWhatsApp(message);
+
+      // Simulate Admin's response
+      setTimeout(() => {
+        const adminMessage = document.createElement('div');
+        adminMessage.classList.add('message');
+        adminMessage.innerHTML = `<div class="admin">Thank you for your message!</div>`;
+        messageContainer.appendChild(adminMessage);
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+      }, 1000);
+    }
+  }
+
+  // Function to send message via WhatsApp API (via backend)
+  function sendToWhatsApp(message) {
+    $.ajax({
+      url: 'http://localhost:3000/send-message',  // Your backend API endpoint
+      type: 'POST',
+      data: JSON.stringify({ message: message }),
+      contentType: 'application/json',
+      success: function(response) {
+        console.log('Message sent to WhatsApp:', response);
+      },
+      error: function(error) {
+        console.error('Error sending message to WhatsApp:', error);
+      }
+    });
+  }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      const links = document.querySelectorAll(".sidebar a");
+      const sections = document.querySelectorAll(".content-section");
+
+      links.forEach(link => {
+          link.addEventListener("click", function (event) {
+              event.preventDefault(); // Prevent page reload
+
+              const page = this.getAttribute("data-page");
+
+              // Hide all sections
+              sections.forEach(section => {
+                  section.classList.remove("active");
+              });
+
+              // Show selected section
+              document.getElementById(page).classList.add("active");
+          });
+      });
+  });
+
+  let currentPage = 1;
+            let rowsPerPage = 2;
+            
+            function displayTableRows() {
+                let table = document.getElementById("tableBody");
+                let rows = table.getElementsByTagName("tr");
+                let totalPages = Math.ceil(rows.length / rowsPerPage);
+                
+                for (let i = 0; i < rows.length; i++) {
+                    rows[i].style.display = (i >= (currentPage - 1) * rowsPerPage && i < currentPage * rowsPerPage) ? "" : "none";
+                }
+                if (rows.length > 6) {
+                    generatePagination(totalPages);
+                } else {
+                    document.getElementById("pagination").innerHTML = "";
+                }
+            }
+            
+            function generatePagination(totalPages) {
+                let pagination = document.getElementById("pagination");
+                pagination.innerHTML = "";
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    let button = document.createElement("button");
+                    button.innerText = i;
+                    button.classList.add("page-btn");
+                    if (i === currentPage) button.classList.add("active");
+                    button.addEventListener("click", function() {
+                        currentPage = i;
+                        displayTableRows();
+                    });
+                    pagination.appendChild(button);
+                }
+            }
+            
+            function searchTable() {
+                let input = document.getElementById("searchInput");
+                let filter = input.value.toLowerCase();
+                let table = document.getElementById("tableBody");
+                let rows = table.getElementsByTagName("tr");
+                
+                for (let row of rows) {
+                    row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+                }
+            }
+            
+            function toggleSearch() {
+                let input = document.getElementById("searchInput");
+                input.style.display = input.style.display === "none" || input.style.display === "" ? "block" : "none";
+            }
+            
+            document.addEventListener("DOMContentLoaded", displayTableRows);
+</script>
+</html>

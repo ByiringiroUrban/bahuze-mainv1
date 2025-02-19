@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Property</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        input[type="text"],
+        input[type="file"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        @media (max-width: 600px) {
+            table {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Add New Property</h1>
+    <form action="/add-property" method="POST" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <th><label for="price">Price:</label></th>
+                <td><input type="text" id="price" name="price" required></td>
+            </tr>
+            <tr>
+                <th><label for="type">Type:</label></th>
+                <td><input type="text" id="type" name="type" required></td>
+            </tr>
+            <tr>
+                <th><label for="location">Location:</label></th>
+                <td><input type="text" id="location" name="location" required></td>
+            </tr>
+            <tr>
+                <th><label for="location">housetype:</label></th>
+                <td><input type="text" id="location" name="housetype" required></td>
+            </tr>
+            <tr>
+                <th><label for="category">Category:</label></th>
+                <td><input type="text" id="category" name="category" required></td>
+            </tr>
+            <tr>
+                <th><label for="size">Size:</label></th>
+                <td><input type="text" id="size" name="size" required></td>
+            </tr>
+            <tr>
+                <th><label for="images">Images:</label></th>
+                <td><input type="file" id="images" name="images" accept="image/*" multiple required></td>
+            </tr>
+        </table>
+        <button type="submit">Add Property</button>
+    </form>
+</body>
+</html>

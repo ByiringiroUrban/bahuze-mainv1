@@ -1,0 +1,45 @@
+<section class="search-section">
+  <a href="/index"><img src="/assets/img/logo.png" alt="logo"></a>
+  <div class="search-container">
+    <form action="/" method="GET">
+        <select name="type" class="dropdown">
+            <option value="">-- Property location --</option>
+            <% propertyLocation.forEach(location => { %>
+                <option value="<%= location ; %>" <%= location === filter ? 'selected' : '' %>><%= location %></option>
+            <% }) %>
+        </select>        
+        <select name="type" class="dropdown">
+            <option value="">-- Property type --</option>
+            <% propertyTypes.forEach(type => { %>
+                <option value="<%= type %>" <%= type === filter ? 'selected' : '' %>><%= type %></option>
+            <% }) %>
+        </select>
+        
+        <select name="housetype" class="dropdown">
+            <option value="">-- Select housetype --</option>
+            <% propertyhousetype.forEach(housetype => { %>
+                <option value="<%= housetype %>" <%= housetype === filter ? 'selected' : '' %>><%= housetype %></option>
+            <% }) %>
+        </select>
+        
+        <input type="number" name="minPrice" placeholder="Min: 0" class="price-input" value="<%= minPrice %>">
+        <input type="number" name="maxPrice" placeholder="Max: 500000" class="price-input" value="<%= maxPrice %>">
+        
+        <button type="submit" class="search-button">Search</button>
+    </form>
+    <img class="menu-icon" id="menu" onclick="openMenu()" src="/assets/img/menu.png" alt="menu button">
+</div>
+
+
+  <!-- Side Menu Structure (Unchanged) -->
+  <div id="sideMenu" class="side-menu">
+      <a href="javascript:void(0)" class="close-btn" onclick="closeMenu()">&times;</a>
+      <a href="/index">Home</a>
+      <a href="/aboutUs">About Us</a>
+      <a href="/customerService">Customer Services</a>
+      <a href="/serviceTeams">Services Terms</a>
+      <a href="/partener">Partnership with Other Agents</a>
+      <a href="/customerTestimon">Customer Testimony</a>
+      <a href="/contactUs">Contact Us</a>
+  </div>
+</section>

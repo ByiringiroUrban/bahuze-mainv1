@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offer Properties</title>
+  <link rel="stylesheet" href="/css/offerPropertie.css">
+  <link rel="icon" href="/assets/img/logo.png">
+</head>
+<body>
+   <!-- Header Section -->
+   <%- include('partials2/header') %>
+
+<!-- Search Section -->
+<%- include('partials2/section') %>
+
+<!-- end of header section................................................................ -->
+<section class="offer-property-section">
+    <div class="container">
+        <h1 class="section-title">OFFER PROPERTY</h1>
+        <form action="#" method="POST" enctype="multipart/form-data" class="offer-property-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first-name">First Name*</label>
+                    <input type="text" id="first-name" name="first-name" placeholder="First Name*" required>
+                </div>
+                <div class="form-group">
+                    <label for="last-name">Last Name*</label>
+                    <input type="text" id="last-name" name="last-name" placeholder="Last Name*" required>
+                </div>
+                <div class="form-group">
+                    <label for="ownership">Ownership</label>
+                    <select id="ownership" name="ownership">
+                        <option value="" disabled selected>-- What is your ownership --</option>
+                        <option value="full">Full Ownership</option>
+                        <option value="partial">Partial Ownership</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone number*</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Phone number*" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email*</label>
+                    <input type="email" id="email" name="email" placeholder="Email*" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-criteria">Property criteria</label>
+                    <select id="property-criteria" name="property-criteria">
+                        <option value="" disabled selected>-- Listing type --</option>
+                        <option value="sale">For Sale</option>
+                        <option value="rent">For Rent</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="property-type">Property type</label>
+                    <select id="property-type" name="property-type">
+                        <option value="" disabled selected>-- Select property type --</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="house">House</option>
+                        <option value="land">Land</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="location">Property Location</label>
+                    <input type="text" id="location" name="location" placeholder="List where the property is located">
+                </div>
+                <div class="price-input-container">
+                    <label for="price">Price</label>
+                    <div class="price-input-wrapper">
+                        <select id="currency" class="price-currency">
+                            <option value="Rwf">Rwf</option>
+                            <option value="USD">USD</option>
+                        </select>
+                        <input type="number" id="price" placeholder="Only digits" class="price-input" required />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="description">Property Description*</label>
+                    <textarea id="description" name="description" rows="5" placeholder="Message*" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="pictures">Upload pictures</label>
+                    <input type="file" id="pictures" name="pictures" accept="image/*" multiple>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <button type="submit" class="send-btn">Send</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+
+
+
+<!-- HTML for the Footer -->
+<%- include('partials2/footer') %>
+<script src="/js/offerPropertie.js"></script>
+</body>
+</html>
