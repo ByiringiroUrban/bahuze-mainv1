@@ -7,6 +7,11 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const multer = require("multer");
+const flash = require("connect-flash");
+const passport = require("passport");
+const nodemailer = require("nodemailer");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 require("dotenv").config();
 
 const app = express();
@@ -31,6 +36,61 @@ app.use(
   })
 );
 
+app.use(flash());
+
+app.set("view engine", "ejs");
+
+// Middleware to make flash messages available in views
+app.use((req, res, next) => {
+  res.locals.successMessage = req.flash("success");
+  res.locals.errorMessage = req.flash("error");
+  next();
+});
+
+
+
+// Session setup (add this before your routes)
+app.use(session({ secret: "your_secret_key", resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+// Store user session
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
+
+// Google OAuth setup
+passport.use(new GoogleStrategy({
+  clientID: "YOUR_GOOGLE_CLIENT_ID",
+  clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
+  callbackURL: "/auth/google/callback"
+}, (accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+}));
+
+// Facebook OAuth setup
+passport.use(new FacebookStrategy({
+  clientID: "YOUR_FACEBOOK_APP_ID",
+  clientSecret: "YOUR_FACEBOOK_APP_SECRET",
+  callbackURL: "/auth/facebook/callback",
+  profileFields: ['id', 'displayName', 'emails', 'photos']
+}, (accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+}));
+
+// Google Routes
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/register" }), (req, res) => {
+  req.flash("success", "Google Login Successful!");
+  res.redirect("/login");
+});
+
+// Facebook Routes
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email"] }));
+app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/register" }), (req, res) => {
+  req.flash("success", "Facebook Login Successful!");
+  res.redirect("/login");
+});
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, )
@@ -87,14 +147,15 @@ app.post("/register", async (req, res) => {
 
     // Check for missing fields
     if (!fullName || !email || !password) {
-      console.error("❌ Missing fields:", { fullName, email, password });
-      return res.scale(400).send("All fields are required.");
+      req.flash("error", "All fields are required.");
+      return res.redirect("/register");
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.scale(400).send("Email already exists. Please use another email.");
+      req.flash("error", "Email already exists. Please use another email.");
+      return res.redirect("/register");
     }
 
     // Hash the password before saving
@@ -104,13 +165,16 @@ app.post("/register", async (req, res) => {
     const newUser = new User({ fullName, email, password: hashedPassword, tel, image });
     await newUser.save();
 
-    // Redirect to index page ("/") after successful registration
-    return res.redirect("/"); // Ensure return is here
+    // Flash success message
+    req.flash("success", "Registration successful! You can now log in.");
+    return res.redirect("/login");
   } catch (error) {
     console.error("❌ Registration Error:", error);
-    return res.scale(500).send("Error registering user."); // Ensure return is here
+    req.flash("error", "Error registering user. Please try again.");
+    return res.redirect("/register");
   }
 });
+
 
 
 // ✅ User Login Route
@@ -235,7 +299,6 @@ app.get("/", async (req, res) => {
 app.get("/register", (req, res) => res.render("register"));
 app.get("/addPropertie", (req, res) => res.render("addPropertie"));
 app.get("/requestPropertie", (req, res) => res.render("requestPropertie"));
-app.get("/offerPropertie", (req, res) => res.render("offerPropertie"));
 app.get("/sidebar/dashboard", authMiddleware, (req, res) => res.render("index2"));
 
 // ✅ Protected Profile Route
@@ -286,7 +349,48 @@ app.post("/add-property", upload.array("images", 5), async (req, res) => {
   }
 });
 
+// offer property
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: 'urbanpac20@gmail.com', // Replace with your email
+    pass: 'txwy ywhl avow hbcr' // Replace with your email password or app password
+  },
+});
 
+app.get("/offerPropertie", (req, res) => {
+  const message = req.session?.message || null;
+  req.session.message = null; // Clear the message after use
+  res.render("offerPropertie", { message });
+});
+
+app.post("/offer-property", upload.array("pictures", 10), (req, res) => {
+  const { firstName, lastName, ownership, phone, email } = req.body;
+
+  const attachments = req.files.map((file) => ({
+    filename: file.originalname,
+    path: file.path,
+  }));
+
+  const mailOptions = {
+    from: '"urban" <byiringirourban20@gmail.com>',
+    to: "urbanpac20@gmail.com",
+    subject: "New Property Offer Submission",
+    text: `New property offer submitted by ${firstName} ${lastName}.`,
+    attachments,
+  };
+
+  transporter.sendMail(mailOptions, (error) => {
+    if (error) {
+      console.error("Error sending email:", error);
+      req.session.message = "An error occurred while submitting. Please try again.";
+      return res.redirect("/offerPropertie");
+    }
+
+    req.session.message = "Your property offer was submitted successfully!";
+    res.redirect("/offerPropertie");
+  });
+});
 
 
 // Start the server
