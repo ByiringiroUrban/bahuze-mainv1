@@ -1,10 +1,8 @@
 <!doctype html>
 <html lang="en">
-  <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> Register Page</title>
-    <!--begin::Primary Meta Tags-->
+    <title>Register Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="title" content="AdminLTE 4 | Register Page" />
     <meta name="author" content="ColorlibHQ" />
@@ -16,107 +14,190 @@
       name="keywords"
       content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard"
     />
-    <!--end::Primary Meta Tags-->
-    <!--begin::Fonts-->
+    <!-- Fonts -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
       integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
       crossorigin="anonymous"
     />
-    <!--end::Fonts-->
-    <!--begin::Third Party Plugin(OverlayScrollbars)-->
+    <!-- OverlayScrollbars -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
       integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg="
       crossorigin="anonymous"
     />
-    <!--end::Third Party Plugin(OverlayScrollbars)-->
-    <!--begin::Third Party Plugin(Bootstrap Icons)-->
+    <!-- Bootstrap Icons -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
       integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
       crossorigin="anonymous"
     />
-    <!--end::Third Party Plugin(Bootstrap Icons)-->
-    <!--begin::Required Plugin(AdminLTE)-->
+    <!-- AdminLTE CSS -->
     <link rel="stylesheet" href="/css/adminlte.css" />
-    <!--end::Required Plugin(AdminLTE)-->
+    <!-- Custom Styles for Popup and Loading Spinner -->
+    <style>
+      /* Popup Message */
+      .popup-message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease-in-out;
+        z-index: 1000;
+        opacity: 0;
+      }
+
+      .popup-message.show {
+        opacity: 1;
+      }
+
+      .popup-message.error {
+        background-color: #f44336;
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(0, 0, 0, 0.1);
+        border-top: 5px solid #4CAF50;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 1001;
+        display: none;
+      }
+
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+    </style>
   </head>
-  <!--end::Head-->
-  <!--begin::Body-->
   <body class="register-page bg-body-secondary">
     <div class="register-box">
-        <div class="register-logo">
-            <a href="/register"><b>Bahuze Register</b></a>
-        </div>
-        <div class="card">
-            <div class="card-body register-card-body">
-                <p class="register-box-msg">Register a new membership</p>
-
-                <!-- Flash Messages -->
-                <% if (successMessage) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <%= successMessage %>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <% } %>
-
-                <% if (errorMessage) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <%= errorMessage %>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <% } %>
-
-                <form action="/register" method="post">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="fullName" placeholder="Full Name" required />
-                        <div class="input-group-text"><span class="bi bi-person"></span></div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" name="email" placeholder="Email" required />
-                        <div class="input-group-text"><span class="bi bi-envelope"></span></div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" required />
-                        <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" required />
-                                <label class="form-check-label">I agree to the <a href="#">terms</a></label>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary w-100">Sign up</button>
-                        </div>
-                    </div>
-                </form>
-
-                <div class="social-auth-links text-center mb-3">
-                    <p>- OR -</p>
-                    <a href="/auth/facebook" class="btn btn-primary w-100 mb-2">
-                        <i class="bi bi-facebook me-2"></i> Sign up with Facebook
-                    </a>
-                    <a href="/auth/google" class="btn btn-danger w-100">
-                        <i class="bi bi-google me-2"></i> Sign up with Google
-                    </a>
-                </div>
-
-                <p class="mb-0 text-center">
-                    <a href="/login">I already have a membership</a>
-                </p>
+      <div class="register-logo">
+        <a href="/register"><b>Bahuze Register</b></a>
+      </div>
+      <div class="card">
+        <div class="card-body register-card-body">
+          <p class="register-box-msg">Register a new membership</p>
+          <form id="registerForm" action="/register" method="POST">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" name="fullName" placeholder="Full Name" required>
+              <div class="input-group-text"><span class="bi bi-person"></span></div>
             </div>
+            <div class="input-group mb-3">
+              <input type="email" class="form-control" name="email" placeholder="Email" required>
+              <div class="input-group-text"><span class="bi bi-envelope"></span></div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="password" class="form-control" name="password" placeholder="Password" required>
+              <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
+            </div>
+            <div class="row">
+              <div class="col-8">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="flexCheckDefault" required>
+                  <label class="form-check-label" for="flexCheckDefault">
+                    I agree to the <a href="#">terms</a>
+                  </label>
+                </div>
+              </div>
+              <div class="col-4">
+                <button type="submit" class="btn btn-primary w-100">Sign up</button>
+              </div>
+            </div>
+          </form>
+          <div class="social-auth-links text-center mb-3 d-grid gap-2">
+            <p>- OR -</p>
+            <a href="/auth/facebook" class="btn btn-primary">
+              <i class="bi bi-facebook me-2"></i> Sign up using Facebook
+            </a>
+            <a href="/auth/google" class="btn btn-danger">
+              <i class="bi bi-google me-2"></i> Sign up using Google
+            </a>
+          </div>
+          <p class="mb-0">
+            <a href="/login" class="text-center">I already have a membership</a>
+          </p>
         </div>
+      </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner"></div>
 
-  <!--end::Body-->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Script for Form Submission -->
+    <script>
+      document.querySelector("#registerForm").addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(this);
+
+        // Show loading spinner
+        showLoading(true);
+
+        try {
+          const response = await fetch("/register", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.text();
+
+          // Hide loading spinner
+          showLoading(false);
+
+          if (response.ok) {
+            showPopup("Registration successful! Redirecting...", "success");
+            setTimeout(() => {
+              window.location.href = "/login"; // Redirect to home page
+            }, 2000);
+          } else {
+            showPopup(result, "error");
+          }
+        } catch (error) {
+          showLoading(false);
+          showPopup("An unexpected error occurred.", "error");
+        }
+      });
+
+      function showPopup(message, type) {
+        const popup = document.createElement("div");
+        popup.classList.add("popup-message", type);
+        popup.innerText = message;
+
+        document.body.appendChild(popup);
+
+        setTimeout(() => {
+          popup.classList.add("show");
+        }, 10);
+
+        setTimeout(() => {
+          popup.classList.remove("show");
+          setTimeout(() => popup.remove(), 300);
+        }, 3000);
+      }
+
+      function showLoading(isLoading) {
+        const loader = document.querySelector(".loading-spinner");
+        loader.style.display = isLoading ? "block" : "none";
+      }
+    </script>
+  </body>
 </html>

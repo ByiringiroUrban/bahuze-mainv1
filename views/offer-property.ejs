@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offer Properties</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Popup Message */
+    .popup-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: opacity 0.3s ease-in-out;
+      z-index: 1000;
+      opacity: 0;
+    }
+
+    .popup-message.show {
+      opacity: 1;
+    }
+
+    .popup-message.error {
+      background-color: #f44336;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(0, 0, 0, 0.1);
+      border-top: 5px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 1001;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Box Shadow for Form */
+    .offer-property-section {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 20px auto;
+      max-width: 800px;
+    }
+
+    /* Back Button */
+    .back-button {
+      margin-bottom: 20px;
+    }
+
+    .back-button a {
+      text-decoration: none;
+      color: #007bff;
+      font-size: 18px;
+    }
+
+    .back-button a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <section class="offer-property-section py-5">
+    <div class="container">
+      <!-- Back Button -->
+      <div class="back-button">
+        <a href="/">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+      </div>
+
+      <h1 class="section-title text-center mb-4">OFFER PROPERTY</h1>
+      <form action="offer-property" method="POST" enctype="multipart/form-data" class="offer-property-form">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="first-name">First Name*</label>
+            <input type="text" id="first-name" name="first-name" class="form-control" placeholder="First Name*" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="last-name">Last Name*</label>
+            <input type="text" id="last-name" name="last-name" class="form-control" placeholder="Last Name*" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="phone">Phone number*</label>
+            <input type="tel" id="phone" name="phone" class="form-control" placeholder="Phone number*" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="email">Email*</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Email*" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="ownership">Ownership</label>
+            <select id="ownership" name="ownership" class="form-control">
+              <option value="" disabled selected>-- What is your ownership --</option>
+              <option value="full">Full Ownership</option>
+              <option value="partial">Partial Ownership</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="property-criteria">Property criteria</label>
+            <select id="property-criteria" name="property-criteria" class="form-control">
+              <option value="" disabled selected>-- Listing type --</option>
+              <option value="sale">For Sale</option>
+              <option value="rent">For Rent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="property-type">Property type</label>
+            <select id="property-type" name="property-type" class="form-control">
+              <option value="" disabled selected>-- Select property type --</option>
+              <option value="apartment">Apartment</option>
+              <option value="house">House</option>
+              <option value="land">Land</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="location">Property Location</label>
+            <input type="text" id="location" name="location" class="form-control" placeholder="List where the property is located">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="price">Price</label>
+            <div class="input-group">
+              <select id="currency" name="price" class="form-control price-currency">
+                <option value="Rwf">Rwf</option>
+                <option value="USD">USD</option>
+              </select>
+              <input type="number" name="money" id="price" placeholder="Only digits" class="form-control" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="description">Property Description*</label>
+            <textarea id="description" name="description" rows="5" class="form-control" placeholder="Message*" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="pictures">Upload pictures</label>
+            <input type="file" id="pictures" name="pictures" class="form-control-file" accept="image/*" multiple>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="col-md-12">
+            <button type="submit" class="btn btn-primary btn-block">Send</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <div class="loading-spinner"></div>
+
+  <script>
+    document.querySelector(".offer-property-form").addEventListener("submit", async function (event) {
+      event.preventDefault(); // Prevent default form submission
+
+      const formData = new FormData(this);
+      
+      // Show loading spinner
+      showLoading(true);
+
+      try {
+          const response = await fetch("/offer-property", {
+              method: "POST",
+              body: formData
+          });
+
+          const result = await response.text();
+          
+          // Hide loading spinner
+          showLoading(false);
+
+          if (response.ok) {
+              showPopup(result, "success");
+              this.reset(); // Reset the form after successful submission
+          } else {
+              showPopup(result, "error");
+          }
+      } catch (error) {
+          showLoading(false);
+          showPopup("An unexpected error occurred.", "error");
+      }
+    });
+
+    function showPopup(message, type) {
+      const popup = document.createElement("div");
+      popup.classList.add("popup-message", type);
+      popup.innerText = message;
+
+      document.body.appendChild(popup);
+
+      setTimeout(() => {
+          popup.classList.add("show");
+      }, 10); 
+
+      setTimeout(() => {
+          popup.classList.remove("show");
+          setTimeout(() => popup.remove(), 300);
+      }, 3000);
+    }
+
+    function showLoading(isLoading) {
+      let loader = document.querySelector(".loading-spinner");
+      
+      if (isLoading) {
+          if (!loader) {
+              loader = document.createElement("div");
+              loader.classList.add("loading-spinner");
+              document.body.appendChild(loader);
+          }
+          loader.style.display = "block";
+      } else {
+          if (loader) loader.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>

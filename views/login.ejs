@@ -44,6 +44,53 @@
     <!--begin::Required Plugin(AdminLTE)-->
     <link rel="stylesheet" href="/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
+    <style>
+      /* Popup Message */
+      .popup-message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease-in-out;
+        z-index: 1000;
+        opacity: 0;
+      }
+
+      .popup-message.show {
+        opacity: 1;
+      }
+
+      .popup-message.error {
+        background-color: #f44336;
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(0, 0, 0, 0.1);
+        border-top: 5px solid #4CAF50;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 1001;
+        display: none;
+      }
+
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+    </style>
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -56,7 +103,7 @@
       <div class="card">
         <div class="card-body login-card-body">
           <p class="login-box-msg">Sign in to start your session</p>
-          <form action="../login" method="post">
+          <form action="../login" method="post" class="loginForm">
             <div class="input-group mb-3">
               <input type="email" class="form-control" name="email" placeholder="Email" />
               <div class="input-group-text"><span class="bi bi-envelope"></span></div>
@@ -123,6 +170,63 @@
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="/dist/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+
+    <script>
+      document.querySelector("#loginForm").addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(this);
+
+        // Show loading spinner
+        showLoading(true);
+
+        try {
+          const response = await fetch("/login", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.text();
+
+          // Hide loading spinner
+          showLoading(false);
+
+          if (response.ok) {
+            showPopup("Registration successful! Redirecting...", "success");
+            setTimeout(() => {
+              window.location.href = "/"; // Redirect to home page
+            }, 2000);
+          } else {
+            showPopup(result, "error");
+          }
+        } catch (error) {
+          showLoading(false);
+          showPopup("An unexpected error occurred.", "error");
+        }
+      });
+
+      function showPopup(message, type) {
+        const popup = document.createElement("div");
+        popup.classList.add("popup-message", type);
+        popup.innerText = message;
+
+        document.body.appendChild(popup);
+
+        setTimeout(() => {
+          popup.classList.add("show");
+        }, 10);
+
+        setTimeout(() => {
+          popup.classList.remove("show");
+          setTimeout(() => popup.remove(), 300);
+        }, 3000);
+      }
+
+      function showLoading(isLoading) {
+        const loader = document.querySelector(".loading-spinner");
+        loader.style.display = isLoading ? "block" : "none";
+      }
+    </script>
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
       const Default = {
@@ -143,6 +247,7 @@
         }
       });
     </script>
+   
     <!--end::OverlayScrollbars Configure-->
     <!--end::Script-->
   </body>

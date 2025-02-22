@@ -6,12 +6,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const multer = require("multer");
-const flash = require("connect-flash");
-const passport = require("passport");
 const nodemailer = require("nodemailer");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const FacebookStrategy = require("passport-facebook").Strategy;
+const multer = require("multer");
 require("dotenv").config();
 
 const app = express();
@@ -36,61 +32,6 @@ app.use(
   })
 );
 
-app.use(flash());
-
-app.set("view engine", "ejs");
-
-// Middleware to make flash messages available in views
-app.use((req, res, next) => {
-  res.locals.successMessage = req.flash("success");
-  res.locals.errorMessage = req.flash("error");
-  next();
-});
-
-
-
-// Session setup (add this before your routes)
-app.use(session({ secret: "your_secret_key", resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
-
-// Store user session
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((obj, done) => done(null, obj));
-
-// Google OAuth setup
-passport.use(new GoogleStrategy({
-  clientID: "YOUR_GOOGLE_CLIENT_ID",
-  clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
-  callbackURL: "/auth/google/callback"
-}, (accessToken, refreshToken, profile, done) => {
-  return done(null, profile);
-}));
-
-// Facebook OAuth setup
-passport.use(new FacebookStrategy({
-  clientID: "YOUR_FACEBOOK_APP_ID",
-  clientSecret: "YOUR_FACEBOOK_APP_SECRET",
-  callbackURL: "/auth/facebook/callback",
-  profileFields: ['id', 'displayName', 'emails', 'photos']
-}, (accessToken, refreshToken, profile, done) => {
-  return done(null, profile);
-}));
-
-// Google Routes
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/register" }), (req, res) => {
-  req.flash("success", "Google Login Successful!");
-  res.redirect("/login");
-});
-
-// Facebook Routes
-app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email"] }));
-app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/register" }), (req, res) => {
-  req.flash("success", "Facebook Login Successful!");
-  res.redirect("/login");
-});
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, )
@@ -140,47 +81,107 @@ const fileFilter = (req, file, cb) => {
 // Upload Middleware
 const upload = multer({ storage, fileFilter });
 // ✅ User Registration Route
-app.post("/register", async (req, res) => {
+app.post("/register", upload.array(), async (req, res) => {
   try {
-    const { fullName, email, password, tel, image } = req.body;
-    console.log("🟢 Incoming request data:", req.body);
+    const { fullName, email, password } = req.body;
 
     // Check for missing fields
     if (!fullName || !email || !password) {
-      req.flash("error", "All fields are required.");
-      return res.redirect("/register");
+      return res.status(400).json({ status: "error", message: "All fields are required." });
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      req.flash("error", "Email already exists. Please use another email.");
-      return res.redirect("/register");
+      return res.status(400).json({ status: "error", message: "Email already exists. Please use another email." });
     }
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create and save the new user
-    const newUser = new User({ fullName, email, password: hashedPassword, tel, image });
+    const newUser = new User({ fullName, email, password: hashedPassword });
     await newUser.save();
 
-    // Flash success message
-    req.flash("success", "Registration successful! You can now log in.");
-    return res.redirect("/login");
+    // Respond with success message
+    res.status(200).json({ status: "success", message: "Registration successful! Redirecting..." });
   } catch (error) {
     console.error("❌ Registration Error:", error);
-    req.flash("error", "Error registering user. Please try again.");
-    return res.redirect("/register");
+    res.status(500).json({ status: "error", message: "Error registering user. Please try again." });
   }
 });
 
+const passport = require("passport");
+const FacebookStrategy = require("passport-facebook").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
+// Facebook Strategy
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: "YOUR_FACEBOOK_APP_ID",
+      clientSecret: "YOUR_FACEBOOK_APP_SECRET",
+      callbackURL: "/auth/facebook/callback",
+      profileFields: ["id", "displayName", "email"],
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ email: profile.emails[0].value });
+        if (!user) {
+          user = new User({
+            fullName: profile.displayName,
+            email: profile.emails[0].value,
+            password: "social-login", // No password for social login
+          });
+          await user.save();
+        }
+        done(null, user);
+      } catch (error) {
+        done(error, null);
+      }
+    }
+  )
+);
+
+// Google Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: "YOUR_GOOGLE_CLIENT_ID",
+      clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
+      callbackURL: "/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ email: profile.emails[0].value });
+        if (!user) {
+          user = new User({
+            fullName: profile.displayName,
+            email: profile.emails[0].value,
+            password: "social-login", // No password for social login
+          });
+          await user.save();
+        }
+        done(null, user);
+      } catch (error) {
+        done(error, null);
+      }
+    }
+  )
+);
+
+// Serialize and Deserialize User
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findById(id);
+  done(null, user);
+});
 
 
 // ✅ User Login Route
 app.get("/login", (req, res) => res.render("login"));
 
-app.post("/login", async (req, res) => {
+app.post("/login", upload.array(), async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log("🟢 Login request data:", req.body);
@@ -189,14 +190,14 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       console.error("❌ Email not found:", email);
-      return res.scale(400).send("Invalid email or password.");
+      return res.status(400).json({ message: "Invalid email or password." }); // Send JSON response
     }
 
     // Compare entered password with hashed password in DB
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       console.error("❌ Password does not match for:", email);
-      return res.scale(400).send("Invalid email or password.");
+      return res.status(400).json({ message: "Invalid email or password." }); // Send JSON response
     }
 
     // Store user session
@@ -204,11 +205,23 @@ app.post("/login", async (req, res) => {
     req.session.user = { id: user._id, fullName: user.fullName, email: user.email };
 
     console.log("✅ Login successful for:", email);
-    res.redirect("/user/dashboard");
+    res.status(200).json({ message: "Login successful!", redirectUrl: "/user/dashboard" }); // Send JSON response
   } catch (error) {
     console.error("❌ Login Error:", error);
-    res.scale(500).send("Error logging in.");
+    res.status(500).json({ message: "Error logging in." }); // Send JSON response
   }
+});
+
+// Facebook Login Routes
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email"] }));
+app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
+  res.redirect("/");
+});
+
+// Google Login Routes
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), (req, res) => {
+  res.redirect("/");
 });
 
 // ✅ User Logout Route
@@ -249,56 +262,62 @@ app.use("/uploads", express.static("uploads"));
 // Define Routes
 app.get("/", async (req, res) => {
   try {
-      const page = Number(req.query.page) || 1;
-      const limit = 8;
-      const skip = (page - 1) * limit;
+      const page = parseInt(req.query.page) || 1; // Get current page from query, default to 1
+      const limit = 8; // Limit to 8 properties per page
+      const skip = (page - 1) * limit; // Calculate the number of documents to skip
 
-      const filter = req.query.type || "";
-      const neighborhood = req.query.neighborhood || "";
-      const scale = req.query.scale || "";
-      const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : 0;
-      const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : Infinity;
+      // Get the filter type from query parameters
+      const filter = req.query.type || ''; // Default to empty if no filter
+      const neighborhood = req.query.neighborhood || ''; // Get neighborhood from query
+      const scale = req.query.scale || ''; // Get scale (Rent/Sale) from query
+      const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : 0; // Minimum price
+      const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : Infinity; // Maximum price
 
+      // Build the filter object
       const filterObj = {};
-      if (filter) filterObj.type = filter;
-      if (scale) filterObj.scale = scale; // Use correct field
-      if (minPrice > 0 || maxPrice < Infinity) {
+      if (filter) {
+          filterObj.type = filter; // Filter by property type
+      }
+  
+      if (scale) {
+          filterObj.type = scale; // Assuming 'type' is used for both Rent/Sale
+      }
+      if (minPrice || maxPrice < Infinity) {
           filterObj.price = {};
-          if (minPrice > 0) filterObj.price.$gte = minPrice;
+          if (minPrice) filterObj.price.$gte = minPrice;
           if (maxPrice < Infinity) filterObj.price.$lte = maxPrice;
       }
 
+      // Find properties based on the filter
       const properties = await Property.find(filterObj).skip(skip).limit(limit);
-      const totalProperties = await Property.countDocuments(filterObj);
-      const totalPages = Math.max(1, Math.ceil(totalProperties / limit));
+      const totalProperties = await Property.countDocuments(filterObj); // Get total number of properties
+      const totalPages = Math.ceil(totalProperties / limit); // Calculate total pages
 
+      // Fetch unique property types for dropdown
       const propertyTypes = await Property.distinct("type");
       const propertyhousetype = await Property.distinct("housetype");
       const propertyLocation = await Property.distinct("location");
-
       res.render("index", { 
           properties, 
           currentPage: page, 
           totalPages, 
           filter, 
-          scale,
           propertyLocation,
           minPrice, 
           maxPrice,
           propertyTypes,
           propertyhousetype
-      });
-
+      }); // Pass properties and pagination data to the view
   } catch (error) {
       console.error("❌ Error fetching properties:", error);
-      res.status(500).send("Error loading properties");
+      res.scale(500).send("Error loading properties");
   }
 });
 
-
 app.get("/register", (req, res) => res.render("register"));
 app.get("/addPropertie", (req, res) => res.render("addPropertie"));
-app.get("/requestPropertie", (req, res) => res.render("requestPropertie"));
+app.get("/request-property", (req, res) => res.render("request-property"));
+app.get("/offer-property", (req, res) => res.render("offer-property"));
 app.get("/sidebar/dashboard", authMiddleware, (req, res) => res.render("index2"));
 
 // ✅ Protected Profile Route
@@ -349,48 +368,145 @@ app.post("/add-property", upload.array("images", 5), async (req, res) => {
   }
 });
 
-// offer property
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: 'urbanpac20@gmail.com', // Replace with your email
-    pass: 'txwy ywhl avow hbcr' // Replace with your email password or app password
-  },
-});
 
-app.get("/offerPropertie", (req, res) => {
+app.get("/request-property", (req, res) => {
   const message = req.session?.message || null;
   req.session.message = null; // Clear the message after use
-  res.render("offerPropertie", { message });
+  res.render("request-property", { message }); // Adjust to match your template engine
 });
 
-app.post("/offer-property", upload.array("pictures", 10), (req, res) => {
-  const { firstName, lastName, ownership, phone, email } = req.body;
+// POST route for /request-property
 
-  const attachments = req.files.map((file) => ({
-    filename: file.originalname,
-    path: file.path,
-  }));
+app.post("/request-property", upload.array(), async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      whoYouAre,
+      currency,
+      minPrice,
+      maxPrice,
+      propertyType,
+      propertyLocations,
+      details,
+    } = req.body;
 
-  const mailOptions = {
-    from: '"urban" <byiringirourban20@gmail.com>',
-    to: "urbanpac20@gmail.com",
-    subject: "New Property Offer Submission",
-    text: `New property offer submitted by ${firstName} ${lastName}.`,
-    attachments,
-  };
+    // Format the email content
+    const emailContent = 
+       ` <h1>New Property Request</h1>
+        <p><strong>First Name:</strong> ${firstName}</p>
+        <p><strong>Last Name:</strong> ${lastName}</p>
+        <p><strong>Phone:</strong> ${phoneNumber}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Who You Are:</strong> ${whoYouAre}</p>
+        <p><strong>Price Range:</strong> ${currency} ${minPrice} - ${currency} ${maxPrice}</p>
+        <p><strong>Property Type:</strong> ${propertyType}</p>
+        <p><strong>Preferred Locations:</strong> ${propertyLocations}</p>
+        <p><strong>Details:</strong> ${details}</p>`
+    ;
 
-  transporter.sendMail(mailOptions, (error) => {
-    if (error) {
-      console.error("Error sending email:", error);
-      req.session.message = "An error occurred while submitting. Please try again.";
-      return res.redirect("/offerPropertie");
-    }
+    // Set up Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "byiringirourban20@gmail.com",
+        pass: "zljw hslg rxpb mqpu", // Replace with your email password
+      },
+    });
 
-    req.session.message = "Your property offer was submitted successfully!";
-    res.redirect("/offerPropertie");
-  });
+    // Email options
+    const mailOptions = {
+      from: "byiringirourban20@gmail.com",
+      to: "urbanpac20@gmail.com",
+      subject: "New Property Request Submission",
+      html: emailContent,
+    };
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+
+    // Respond to the client
+    res.status(200).send("Request Propertiy submitted successfully!");
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    res.status(500).send("An error occurred while submitting the form.");
+  }
 });
+
+// offer propertie
+app.get("/offer-property", (req, res) => {
+  const message = req.session?.message || null;
+  req.session.message = null; // Clear the message after use
+  res.render("/offer-property", { message });
+});
+
+app.post("/offer-property", upload.array("pictures", 10), async (req, res) => {
+  try {
+      const {
+          "first-name": firstName,
+          "last-name": lastName,
+          ownership,
+          phone,
+          email,
+          "property-criteria": propertyCriteria,
+          "property-type": propertyType,
+          location,
+          price,
+          money,
+          description,
+      } = req.body;
+
+      const files = req.files;
+
+      // Format the email content
+      const emailContent = 
+         ` <h1>New Property Offer</h1>
+          <p><strong>First Name:</strong> ${firstName}</p>
+          <p><strong>Last Name:</strong> ${lastName}</p>
+          <p><strong>Ownership:</strong> ${ownership}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Property Criteria:</strong> ${propertyCriteria}</p>
+          <p><strong>Property Type:</strong> ${propertyType}</p>
+          <p><strong>Location:</strong> ${location}</p>
+          <p><strong>Price Range:</strong> ${price},  ${money} </p>
+          <p><strong>Description:</strong> ${description}</p>`
+      ;
+
+      // Set up Nodemailer transporter
+      const transporter = nodemailer.createTransport({
+          service: "gmail", // Use your email service provider
+          auth: {
+              user: "byiringirourban20@gmail.com", // Replace with your email
+              pass: "zljw hslg rxpb mqpu", // Replace with your email password
+          },
+      });
+
+      // Email options
+      const mailOptions = {
+          from: "byiringirourban20@gmail.com",
+          to: "urbanpac20@gmail.com", // Replace with recipient email
+          subject: "New Property Offer Submission",
+          html: emailContent,
+          attachments: files.map((file) => ({
+              filename: file.originalname,
+              path: file.path,
+          })),
+      };
+
+      // Send the email
+      await transporter.sendMail(mailOptions);
+
+      // Respond to the client
+      res.status(200).send("offer property submitted successfully!");
+  } catch (error) {
+      console.error("Error submitting form:", error);
+      res.status(500).send("An error occurred while submitting the form.");
+  }
+});
+
 
 
 // Start the server
