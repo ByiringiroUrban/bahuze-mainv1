@@ -476,7 +476,7 @@ footer {
         <a href="#" data-page="messages">
           <i class="material-icons">message</i> Clients Messages
         </a>
-        <a href="#" data-page="booking">
+        <a href="" data-page="booking">
           <i class="material-icons">event</i> Booking
         </a>
         <a href="#" data-page="settings">
@@ -577,8 +577,42 @@ footer {
             <h2>Settings</h2>
             <p>Update your profile and account settings here.</p>
         </div>
-        <div id="booking" class="content-section">
-          
+        <div id="booking" class="content-section booking">
+          <div class="properties-list">
+            
+               
+            <% if (properties.length > 0) { %>
+              <div class="property-grid">
+                  <% properties.forEach(property => { %>
+                      <div class="property-card" style="position: relative; z-index: -11;">
+                          <a href="#"><img src="<%= property.images[0] %>" alt="Property Image"></a>
+                          <div class="property-info">
+                              <a href="#"><h5 class="text-warning"> RWF<%= property.price %> / <span class="badge text-bg-primary"><%= property.housetype %></span></h5></a>
+                              <p><%= property.location %></p>
+                              <span><%= property.category %> - <%= property.size %>km/square</span>
+                              <% if (property.type === 'Rent') { %>
+                                  <div class="bg-warning fw-bolder p-3 d-flex justify-content-center align-items-center" style="height: 53px; width: 53px; text-align: center; clip-path: polygon(50% 0%, 63% 30%, 98% 35%, 76% 57%, 79% 91%, 50% 74%, 21% 91%, 25% 58%, 2% 35%, 33% 32%); position: relative; z-index: -1; font-size: 9px;">
+                                      Rent
+                                  </div>
+                              <% } else if (property.type === 'Sale') { %>
+                                  <div class="bg-success fw-bolder p-3 d-flex justify-content-center align-items-center" style="height: 53px; width: 53px; text-align: center; clip-path: polygon(50% 0%, 63% 30%, 98% 35%, 76% 57%, 79% 91%, 50% 74%, 21% 91%, 25% 58%, 2% 35%, 33% 32%); position: relative; z-index: -1; font-size: 9px;">
+                                      Sale
+                                  </div>
+                              <% } %>
+                              <a href="" class="">book</a>
+                              <a href="" class="">buy</a>
+                          </div>
+                      </div>
+                  <% }) %>
+              </div>
+          <% } else { %>
+              <div class="property-grid">
+                  <div class="property-card">
+                      <p>No properties available.</p>
+                  </div>
+              </div>
+          <% } %>
+                </div>
         </div>
     </main>
 </div>

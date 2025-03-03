@@ -253,16 +253,20 @@ app.get("/user/dashboard", authMiddleware, async (req, res) => {
     const user = await User.findById(req.session.userId);
     if (!user) return res.redirect("/login"); // Redirect to login if user not found
 
-    // Render the user dashboard with user data
+    // Fetch all properties
+    const properties = await Property.find(); 
+
+    // Render the user dashboard with user data and properties
     res.render("userDashboard", {
       fullName: user.fullName,
       image: user.image,
       tel: user.tel,
       email: user.email,
+      properties, // Pass the fetched properties to the template
     });
   } catch (error) {
     console.error("❌ Error fetching user data:", error);
-    res.status(500).send("Server Error"); // Change scale to status
+    res.status(500).send("Server Error");
   }
 });
 
@@ -271,8 +275,7 @@ app.get("/user/dashboard", authMiddleware, async (req, res) => {
 // add propertie
 
 
-
-app.post("/add-property", upload.array("images", 5), async (req, res) => {
+app.post("/addPropertie", upload.array("images", 5), async (req, res) => {
   try {
     const { price, housetype, type, location, category, size } = req.body;
 
