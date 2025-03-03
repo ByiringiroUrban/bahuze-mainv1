@@ -467,12 +467,21 @@ footer {
         <img src="<%= image %>" alt="Profile Picture" >
         <h3><%= fullName %></h3>
         <p><%= tel %></p>
-        <a href="#" data-page="profile">Profile</a>
-        <a href="#" data-page="properties"> <span class="material-symbols-outlined">
-          real_estate_agent
-          </span> My Properties</a>
-        <a href="#" data-page="messages"> Clients Messages</a>
-        <a href="#" data-page="settings">Settings</a>
+        <a href="#" data-page="profile">
+          <i class="material-icons">account_circle</i> Profile
+        </a>
+        <a href="#" data-page="properties">
+          <i class="material-icons">real_estate_agent</i> My Properties
+        </a>
+        <a href="#" data-page="messages">
+          <i class="material-icons">message</i> Clients Messages
+        </a>
+        <a href="#" data-page="booking">
+          <i class="material-icons">event</i> Booking
+        </a>
+        <a href="#" data-page="settings">
+          <i class="material-icons">settings</i> Settings
+        </a>
     </aside>
 
     <main class="main-content">
@@ -567,6 +576,9 @@ footer {
         <div id="settings" class="content-section">
             <h2>Settings</h2>
             <p>Update your profile and account settings here.</p>
+        </div>
+        <div id="booking" class="content-section">
+          
         </div>
     </main>
 </div>
